@@ -34,6 +34,9 @@ use alacritty_terminal::term::{
 };
 use alacritty_terminal::vte::ansi::{CursorShape, NamedColor};
 
+// itzik
+use alacritty_terminal::selection::SelectionType;
+
 use crate::config::font::Font;
 use crate::config::window::Dimensions;
 #[cfg(not(windows))]
@@ -744,6 +747,63 @@ impl Display {
 
         let vi_mode = terminal.mode().contains(TermMode::VI);
         let vi_cursor_point = if vi_mode { Some(terminal.vi_mode_cursor.point) } else { None };
+        // itzik next not working yet
+        // let mut selection_type_label = String::new();
+        // if terminal.selection.as_ref().unwrap().ty == SelectionType::Semantic {
+        //     selection_type_label.push_str("Semantic");
+        // }else{
+        //     selection_type_label.push_str("ELSE");
+        // }
+        //let mut selection_type_label = 77;
+
+        // next work => put in fork and change to show text, even
+        // eg, as prefix to coordinates
+        // or maybe put the VI, as prefix in search,
+        // eg
+        // [VI] Search: 
+        // [VI] Backward search: 
+        // and selection on top right
+        // eg 
+        // Simple[x,y]
+        // Block[x,y]
+        // Semantic[x,y]
+        // Lines[x,y]
+        // or just 3/4 lettes (bcz simple and semnatic are close, cant use less)
+        // not good
+        // Smpl[x,y]
+        // Blok[x,y]
+        // Smnt[x,y]
+        // Lins[x,y]
+        // one ? "S" & "M" both in simple and semantic, so skip to avoid confusion
+        // P[x,y]
+        // B[x,y]
+        // N[x,y]
+        // L[x,y]
+        let selection_type_label =  Self::get_selection_type_label(&terminal.selection);    
+        // move to new funtion get_selection_type_label()
+        /*
+        match &terminal.selection {
+            Some(selection) => {
+                match selection.ty {
+                    SelectionType::Simple => selection_type_label = 101,
+                    SelectionType::Block => selection_type_label = 102,
+                    SelectionType::Semantic => selection_type_label = 103,
+                    SelectionType::Lines => selection_type_label = 104,
+                    _ => selection_type_label = 999,
+                }
+            },
+            None => selection_type_label = 88,
+          }
+          */
+        // ok, next cause 'crash'
+        // TODO - find how to do without unwrap ???
+        // if terminal.selection.as_ref().unwrap().ty == SelectionType::Semantic {
+        //     selection_type_label = 44;
+        // }else{
+        //     selection_type_label = 55;
+        // }
+
+        //let x: Option<Selection> = Some(terminal.selection);
 
         // Add damage from the terminal.
         if self.collect_damage() {
@@ -842,10 +902,10 @@ impl Display {
             let obstructed_column = Some(vi_cursor_point)
                 .filter(|point| point.line == -(display_offset as i32))
                 .map(|point| point.column);
-            self.draw_line_indicator(config, total_lines, obstructed_column, line);
+            self.draw_line_indicator(config, total_lines, obstructed_column, line, vi_mode, selection_type_label);
         } else if search_state.regex().is_some() {
             // Show current display offset in vi-less search to indicate match position.
-            self.draw_line_indicator(config, total_lines, None, display_offset);
+            self.draw_line_indicator(config, total_lines, None, display_offset, vi_mode, selection_type_label );
         };
 
         // Draw cursor.
@@ -1289,9 +1349,19 @@ impl Display {
         total_lines: usize,
         obstructed_column: Option<Column>,
         line: usize,
+        vi_mode: bool,
+        selection_type_label: &str
     ) {
+        // itzik
+        if vi_mode {//term.mode().contains(TermMode::VI)){
+
+        }
+
+        
+
         let columns = self.size_info.columns();
-        let text = format!("[{}/{}]", line, total_lines - 1);
+        let text = format!("({})<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
+        //let text = format!("<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
         let column = Column(self.size_info.columns().saturating_sub(text.len()));
         let point = Point::new(0, column);
 
@@ -1358,6 +1428,21 @@ impl Display {
         let event = Event::new(EventType::Frame, window_id);
 
         scheduler.schedule(event, swap_timeout, false, timer_id);
+    }
+
+    fn get_selection_type_label(selection: &Option<Selection>) -> &'static str {
+        match selection {
+            Some(selection) => {
+                match selection.ty {
+                    SelectionType::Simple => return "Simple",
+                    SelectionType::Block => return "Block",
+                    SelectionType::Semantic => return "Semantic",
+                    SelectionType::Lines => return "Lines",
+                    //_ => return 999,
+                }
+            },
+            None => return "",
+          }
     }
 }
 
