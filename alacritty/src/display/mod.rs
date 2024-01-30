@@ -933,7 +933,12 @@ impl Display {
                     Direction::Left => BACKWARD_SEARCH_LABEL,
                 };
 
-                let search_text = Self::format_search(regex, search_label, size_info.columns());
+                let mut search_label_2 = search_label.to_string();
+                if vi_mode {
+                    search_label_2 = format!("{} {}", "[VI]", search_label);
+                }
+
+                let search_text = Self::format_search(regex, &search_label_2, size_info.columns());
 
                 // Render the search bar.
                 self.draw_search(config, &search_text);
