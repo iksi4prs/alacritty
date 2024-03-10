@@ -1367,19 +1367,17 @@ impl Display {
         total_lines: usize,
         obstructed_column: Option<Column>,
         line: usize,
-        vi_mode: bool,
+        vi_mode: bool, // iksi4prs, remove if not used (cursor color is enough ?)
         selection_type_label: &str
     ) {
         // iksi4prs
-        if vi_mode {//term.mode().contains(TermMode::VI)){
-
-        }
-
-        
+        //if vi_mode {
+        //}
 
         let columns = self.size_info.columns();
-        let text = format!("({})<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
+        //let text = format!("({})<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
         //let text = format!("<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
+        let text = format!("{}[{}/{}]", selection_type_label, line, total_lines - 1);
         let column = Column(self.size_info.columns().saturating_sub(text.len()));
         let point = Point::new(0, column);
 
