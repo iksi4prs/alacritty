@@ -754,7 +754,7 @@ impl Display {
         let vi_mode = terminal.mode().contains(TermMode::VI);
         let vi_cursor_point = if vi_mode { Some(terminal.vi_mode_cursor.point) } else { None };
         // iksi4rs =  vi_selection_type_indicator added by me
-        let selection_type_label = 
+        let vi_selection_type_label = 
             if config.selection.vi_selection_type_indicator {
                 Self::get_selection_type_label(&terminal.selection)
             } else{
@@ -858,10 +858,10 @@ impl Display {
             let obstructed_column = Some(vi_cursor_point)
                 .filter(|point| point.line == -(display_offset as i32))
                 .map(|point| point.column);
-            self.draw_line_indicator_and_selection_type(config, total_lines, obstructed_column, line, vi_mode, selection_type_label);
+            self.draw_line_indicator_and_selection_type(config, total_lines, obstructed_column, line, vi_mode, vi_selection_type_label);
         } else if search_state.regex().is_some() {
             // Show current display offset in vi-less search to indicate match position.
-            self.draw_line_indicator_and_selection_type(config, total_lines, None, display_offset, vi_mode, selection_type_label );
+            self.draw_line_indicator_and_selection_type(config, total_lines, None, display_offset, vi_mode, vi_selection_type_label );
         };
 
         // Draw cursor.
@@ -1302,7 +1302,8 @@ impl Display {
         self.renderer.draw_string(point, fg, bg, timing.chars(), &self.size_info, glyph_cache);
     }
 
-    /// Draw an indicator for the position of a line in history.
+    /// Draw an indicator for the position of a line in history,
+    /// and also vi selection type (can be empty string).
     #[inline(never)]
     fn draw_line_indicator_and_selection_type(
         &mut self,
@@ -1311,16 +1312,10 @@ impl Display {
         obstructed_column: Option<Column>,
         line: usize,
         vi_mode: bool, // iksi4prs, remove if not used (cursor color is enough ?)
-        selection_type_label: &str
+        vi_selection_type_label: &str
     ) {
-        // iksi4prs
-        //if vi_mode {
-        //}
-
         let columns = self.size_info.columns();
-        //let text = format!("({})<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
-        //let text = format!("<{}>[{}/{}]", selection_type_label, vi_mode, line, total_lines - 1);
-        let text = format!("{}[{}/{}]", selection_type_label, line, total_lines - 1);
+        let text = format!("{}[{}/{}]", vi_selection_type_label, line, total_lines - 1);
         let column = Column(self.size_info.columns().saturating_sub(text.len()));
         let point = Point::new(0, column);
 
