@@ -5,6 +5,7 @@ use alacritty_terminal::term::SEMANTIC_ESCAPE_CHARS;
 pub struct Selection {
     pub semantic_escape_chars: String,
     pub save_to_clipboard: bool,
+    pub vi_selection_type_indicator: bool,
 }
 
 impl Default for Selection {
@@ -12,6 +13,7 @@ impl Default for Selection {
         Self {
             semantic_escape_chars: SEMANTIC_ESCAPE_CHARS.to_owned(),
             save_to_clipboard: Default::default(),
+            vi_selection_type_indicator: Default::default(),
         }
     }
 }

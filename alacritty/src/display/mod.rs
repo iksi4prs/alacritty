@@ -34,7 +34,7 @@ use alacritty_terminal::term::{
 };
 use alacritty_terminal::vte::ansi::{CursorShape, NamedColor};
 
-// itzik
+// iksi4prs
 use alacritty_terminal::selection::SelectionType;
 
 use crate::config::font::Font;
@@ -747,7 +747,7 @@ impl Display {
 
         let vi_mode = terminal.mode().contains(TermMode::VI);
         let vi_cursor_point = if vi_mode { Some(terminal.vi_mode_cursor.point) } else { None };
-        // itzik next not working yet
+        // iksi4prs next not working yet
         // let mut selection_type_label = String::new();
         // if terminal.selection.as_ref().unwrap().ty == SelectionType::Semantic {
         //     selection_type_label.push_str("Semantic");
@@ -779,7 +779,14 @@ impl Display {
         // B[x,y]
         // N[x,y]
         // L[x,y]
-        let selection_type_label =  Self::get_selection_type_label(&terminal.selection);    
+
+        // iksi4rs =  vi_selection_type_indicator added by me
+        let selection_type_label = 
+            if config.selection.vi_selection_type_indicator {
+                Self::get_selection_type_label(&terminal.selection)
+            } else{
+                 ""
+            };
         // move to new funtion get_selection_type_label()
         /*
         match &terminal.selection {
@@ -1357,7 +1364,7 @@ impl Display {
         vi_mode: bool,
         selection_type_label: &str
     ) {
-        // itzik
+        // iksi4prs
         if vi_mode {//term.mode().contains(TermMode::VI)){
 
         }
