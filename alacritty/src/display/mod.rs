@@ -79,6 +79,12 @@ const SHORTENER: char = '…';
 /// Color which is used to highlight damaged rects when debugging.
 const DAMAGE_RECT_COLOR: Rgb = Rgb::new(255, 0, 255);
 
+/// Labels for vi selection types
+const SELECTION_TYPE_SIMPLE_LABEL: &str = "Simple";
+const SELECTION_TYPE_BLOCK_LABEL: &str = "Block";
+const SELECTION_TYPE_SEMANTIC_LABEL: &str = "Semantic";
+const SELECTION_TYPE_LINES_LABEL: &str = "Lines";
+
 #[derive(Debug)]
 pub enum Error {
     /// Error with window management.
@@ -1446,11 +1452,10 @@ impl Display {
         match selection {
             Some(selection) => {
                 match selection.ty {
-                    SelectionType::Simple => return "Simple",
-                    SelectionType::Block => return "Block",
-                    SelectionType::Semantic => return "Semantic",
-                    SelectionType::Lines => return "Lines",
-                    //_ => return 999,
+                    SelectionType::Simple => return SELECTION_TYPE_SIMPLE_LABEL,
+                    SelectionType::Block => return SELECTION_TYPE_BLOCK_LABEL,
+                    SelectionType::Semantic => return SELECTION_TYPE_SEMANTIC_LABEL,
+                    SelectionType::Lines => return SELECTION_TYPE_LINES_LABEL
                 }
             },
             None => return "",
