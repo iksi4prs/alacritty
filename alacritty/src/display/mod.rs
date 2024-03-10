@@ -753,39 +753,6 @@ impl Display {
 
         let vi_mode = terminal.mode().contains(TermMode::VI);
         let vi_cursor_point = if vi_mode { Some(terminal.vi_mode_cursor.point) } else { None };
-        // iksi4prs next not working yet
-        // let mut selection_type_label = String::new();
-        // if terminal.selection.as_ref().unwrap().ty == SelectionType::Semantic {
-        //     selection_type_label.push_str("Semantic");
-        // }else{
-        //     selection_type_label.push_str("ELSE");
-        // }
-        //let mut selection_type_label = 77;
-
-        // next work => put in fork and change to show text, even
-        // eg, as prefix to coordinates
-        // or maybe put the VI, as prefix in search,
-        // eg
-        // [VI] Search: 
-        // [VI] Backward search: 
-        // and selection on top right
-        // eg 
-        // Simple[x,y]
-        // Block[x,y]
-        // Semantic[x,y]
-        // Lines[x,y]
-        // or just 3/4 lettes (bcz simple and semnatic are close, cant use less)
-        // not good
-        // Smpl[x,y]
-        // Blok[x,y]
-        // Smnt[x,y]
-        // Lins[x,y]
-        // one ? "S" & "M" both in simple and semantic, so skip to avoid confusion
-        // P[x,y]
-        // B[x,y]
-        // N[x,y]
-        // L[x,y]
-
         // iksi4rs =  vi_selection_type_indicator added by me
         let selection_type_label = 
             if config.selection.vi_selection_type_indicator {
@@ -793,30 +760,6 @@ impl Display {
             } else{
                  ""
             };
-        // move to new funtion get_selection_type_label()
-        /*
-        match &terminal.selection {
-            Some(selection) => {
-                match selection.ty {
-                    SelectionType::Simple => selection_type_label = 101,
-                    SelectionType::Block => selection_type_label = 102,
-                    SelectionType::Semantic => selection_type_label = 103,
-                    SelectionType::Lines => selection_type_label = 104,
-                    _ => selection_type_label = 999,
-                }
-            },
-            None => selection_type_label = 88,
-          }
-          */
-        // ok, next cause 'crash'
-        // TODO - find how to do without unwrap ???
-        // if terminal.selection.as_ref().unwrap().ty == SelectionType::Semantic {
-        //     selection_type_label = 44;
-        // }else{
-        //     selection_type_label = 55;
-        // }
-
-        //let x: Option<Selection> = Some(terminal.selection);
 
         // Add damage from the terminal.
         if self.collect_damage() {
@@ -915,10 +858,10 @@ impl Display {
             let obstructed_column = Some(vi_cursor_point)
                 .filter(|point| point.line == -(display_offset as i32))
                 .map(|point| point.column);
-            self.draw_line_indicator(config, total_lines, obstructed_column, line, vi_mode, selection_type_label);
+            self.draw_line_indicator_and_selection_type(config, total_lines, obstructed_column, line, vi_mode, selection_type_label);
         } else if search_state.regex().is_some() {
             // Show current display offset in vi-less search to indicate match position.
-            self.draw_line_indicator(config, total_lines, None, display_offset, vi_mode, selection_type_label );
+            self.draw_line_indicator_and_selection_type(config, total_lines, None, display_offset, vi_mode, selection_type_label );
         };
 
         // Draw cursor.
@@ -1361,7 +1304,7 @@ impl Display {
 
     /// Draw an indicator for the position of a line in history.
     #[inline(never)]
-    fn draw_line_indicator(
+    fn draw_line_indicator_and_selection_type(
         &mut self,
         config: &UiConfig,
         total_lines: usize,
