@@ -420,8 +420,16 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         Self { ctx, _phantom: Default::default() }
     }
 
+    // iksi4prs  - disable mouse, the orig function update cursor pos,
+    // selection, etc, when mouse is moved.
+    // to disable mouse scroll, see 151515
     #[inline]
     pub fn mouse_moved(&mut self, position: PhysicalPosition<f64>) {
+        // dummy
+    }
+
+    #[inline]
+    pub fn mouse_moved_ORIG(&mut self, position: PhysicalPosition<f64>) {
         let size_info = self.ctx.size_info();
 
         let (x, y) = position.into();
@@ -692,6 +700,11 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
     }
 
     pub fn mouse_wheel_input(&mut self, delta: MouseScrollDelta, phase: TouchPhase) {
+        // iksi4prs
+        // 151515
+        // dummy, to disable scroll with mouse wheel
+    }
+    pub fn mouse_wheel_input_ORIG(&mut self, delta: MouseScrollDelta, phase: TouchPhase) {
         let multiplier = self.ctx.config().scrolling.multiplier;
         match delta {
             MouseScrollDelta::LineDelta(columns, lines) => {
