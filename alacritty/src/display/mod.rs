@@ -27,6 +27,8 @@ use alacritty_terminal::event::{EventListener, OnResize, WindowSize};
 use alacritty_terminal::grid::Dimensions as TermDimensions;
 use alacritty_terminal::index::{Column, Direction, Line, Point};
 use alacritty_terminal::selection::Selection;
+// iksi4prs
+use alacritty_terminal::selection::SelectionType;
 use alacritty_terminal::term::cell::Flags;
 use alacritty_terminal::term::{
     self, point_to_viewport, LineDamageBounds, Term, TermDamage, TermMode, MIN_COLUMNS,
@@ -34,8 +36,6 @@ use alacritty_terminal::term::{
 };
 use alacritty_terminal::vte::ansi::{CursorShape, NamedColor};
 
-// iksi4prs
-use alacritty_terminal::selection::SelectionType;
 
 use crate::config::font::Font;
 use crate::config::window::Dimensions;
@@ -756,9 +756,17 @@ impl Display {
         // iksi4rs =  vi_selection_type_indicator added by me
         let vi_selection_type_label = 
             if config.selection.vi_selection_type_indicator {
-                Self::get_selection_type_label(&terminal.selection)
+                Self::get_selection_type_label(&terminal.selection) // 131313 
             } else{
                  ""
+            };
+
+        let vi_selection_type_letter = Self::get_selection_type_letter(&terminal.selection);
+        let vi_selection_type_2 = 
+            if vi_mode && config.selection.vi_selection_type_indicator {
+                terminal.selection.clone()
+            } else {
+                None
             };
 
         // Add damage from the terminal.
@@ -865,7 +873,9 @@ impl Display {
         };
 
         // Draw cursor.
-        rects.extend(cursor.rects(&size_info, config.cursor.thickness()));
+        // 131313
+        rects.extend(cursor.rects(&size_info, config.cursor.thickness(), &vi_selection_type_2));
+        //rects.extend(cursor.rects(&size_info, config.cursor.thickness(), vi_selection_type_letter));
 
         // Push visual bell after url/underline/strikeout rects.
         let visual_bell_intensity = self.visual_bell.intensity();
@@ -908,7 +918,7 @@ impl Display {
                     let fg = config.colors.footer_bar_foreground();
                     let shape = CursorShape::Underline;
                     let cursor = RenderableCursor::new(Point::new(line, column), shape, fg, false);
-                    rects.extend(cursor.rects(&size_info, config.cursor.thickness()));
+                    rects.extend(cursor.rects(&size_info, config.cursor.thickness(), &None));
                 }
 
                 Some(Point::new(line, column))
@@ -1158,7 +1168,7 @@ impl Display {
                 let cursor_point = Point::new(point.line, cursor_column);
                 let cursor =
                     RenderableCursor::new(cursor_point, CursorShape::HollowBlock, fg, is_wide);
-                rects.extend(cursor.rects(&self.size_info, config.cursor.thickness()));
+                rects.extend(cursor.rects(&self.size_info, config.cursor.thickness(), &None));
                 cursor_point
             },
             _ => end,
@@ -1395,6 +1405,19 @@ impl Display {
                 }
             },
             None => return "",
+          }
+    }
+    fn get_selection_type_letter(selection: &Option<Selection>) -> char {
+        match selection {
+            Some(selection) => {
+                match selection.ty {
+                    SelectionType::Simple => return 'N',
+                    SelectionType::Block => return 'B',
+                    SelectionType::Semantic => return 'S',
+                    SelectionType::Lines => return 'L'
+                }
+            },
+            None => return '\0',
           }
     }
 }
