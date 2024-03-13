@@ -1,11 +1,12 @@
 use std::borrow::Cow;
 use std::ops::Deref;
 use std::{cmp, mem};
-
+use log::{debug, info};
 use alacritty_terminal::event::EventListener;
 use alacritty_terminal::grid::{Dimensions, Indexed};
 use alacritty_terminal::index::{Column, Line, Point};
 use alacritty_terminal::selection::SelectionRange;
+use alacritty_terminal::selection::SelectionType;
 use alacritty_terminal::term::cell::{Cell, Flags, Hyperlink};
 use alacritty_terminal::term::search::{Match, RegexSearch};
 use alacritty_terminal::term::{self, RenderableContent as TerminalContent, Term, TermMode};
@@ -34,6 +35,7 @@ pub struct RenderableContent<'a> {
     colors: &'a List,
     focused_match: Option<&'a Match>,
     size: &'a SizeInfo,
+    has_selection_type: bool,
 }
 
 impl<'a> RenderableContent<'a> {
@@ -71,6 +73,34 @@ impl<'a> RenderableContent<'a> {
         } else {
             None
         };
+         
+        
+        
+        let xxx = &term.selection;
+        let has_selection_type = 
+             match xxx {
+                Some(xxx) => true,
+                None => false,
+             };
+                    /*
+                    Some(xxx) => 
+                       {
+                        info!("33333 START");
+                        let thickness_2 = 3.0;
+                        match xxx.ty {
+                            SelectionType::Simple => { info!("33333 Simple");},
+                            SelectionType::Block =>  { info!("33333 Block"); },
+                            SelectionType::Semantic => { info!("33333 Semantic");},
+                            SelectionType::Lines => { info!("3333 Lines");},
+                            _ =>  { info!("33333 11111underscore");},
+                        }
+                    },
+                    None => { info!("33333 33333 None");},
+                    */
+            //let xxx = Some(&term.selection).ty;
+            //info!("555005, xxx: {}", xxx);
+        
+        //let has_selection_type = if Some(&term.selection) != None {true} else {false};
 
         Self {
             colors: &display.colors,
@@ -83,6 +113,7 @@ impl<'a> RenderableContent<'a> {
             search,
             config,
             hint,
+            has_selection_type
         }
     }
 
@@ -160,14 +191,36 @@ impl<'a> Iterator for RenderableContent<'a> {
             if self.cursor_point == cell.point {
                 // Store the cursor which should be rendered.
                 self.cursor = self.renderable_cursor(&cell);
-                if self.cursor.shape == CursorShape::Block {
-                    cell.fg = self.cursor.text_color;
-                    cell.bg = self.cursor.cursor_color;
 
-                    // Since we draw Block cursor by drawing cell below it with a proper color,
-                    // we must adjust alpha to make it visible.
-                    cell.bg_alpha = 1.;
+               
+
+                /* iksi4prs for selection letter */
+                if self.cursor.shape == CursorShape::Block {
+                    // ANYWAY NEED TO COMUTE has_selection eralier, so maybe move all to ctor ??
+                    // bcz terminal_content.selection is not same the "selection_type" we need
+                     // if works, drop assignments, and just do the checks in next order
+                     // (fastest check first)
+                     
+                    let configured = self.config.selection.vi_selection_type_indicator;
+                    let vi_mode = self.terminal_content.mode.contains(TermMode::VI);
+                    //let has_selection = if Some(term.selection) != None {true} else {false};
+                    let has_selection = self.has_selection_type;
+                    info!("555003, configured: {}, vi_mode: {}, has_selection: {}", configured, vi_mode, has_selection);
+
+                    let skip = if vi_mode && has_selection && configured {true} else {false};
+                    // 616161 check here value of has_selection
+                    if skip {
+                        // do nothing, all drawing is via 'cursor.rects'
+                    } else {
+                        cell.fg = self.cursor.text_color;
+                        cell.bg = self.cursor.cursor_color;
+
+                        // Since we draw Block cursor by drawing cell below it with a proper color,
+                        // we must adjust alpha to make it visible.
+                        cell.bg_alpha = 1.;
+                    }
                 }
+                
 
                 return Some(cell);
             } else if !cell.is_empty() && !cell.flags.contains(Flags::WIDE_CHAR_SPACER) {

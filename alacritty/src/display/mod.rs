@@ -755,13 +755,13 @@ impl Display {
         let vi_cursor_point = if vi_mode { Some(terminal.vi_mode_cursor.point) } else { None };
         // iksi4rs =  vi_selection_type_indicator added by me
         let vi_selection_type_label = 
-            if config.selection.vi_selection_type_indicator {
+            if vi_mode && config.selection.vi_selection_type_indicator {
                 Self::get_selection_type_label(&terminal.selection) // 131313 
             } else{
-                 ""
+                 "XXX555"
             };
 
-        let vi_selection_type_letter = Self::get_selection_type_letter(&terminal.selection);
+        //let vi_selection_type_letter = Self::get_selection_type_letter(&terminal.selection);
         let vi_selection_type_2 = 
             if vi_mode && config.selection.vi_selection_type_indicator {
                 terminal.selection.clone()
@@ -769,6 +769,10 @@ impl Display {
                 None
             };
 
+         info!(
+                "55550001: {:?}",
+                vi_selection_type_2
+          );
         // Add damage from the terminal.
         if self.collect_damage() {
             match terminal.damage() {

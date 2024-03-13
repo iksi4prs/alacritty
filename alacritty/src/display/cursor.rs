@@ -1,5 +1,7 @@
 //! Convert a cursor into an iterator of rects.
 
+use log::{debug, info};
+
 use alacritty_terminal::vte::ansi::CursorShape;
 // iksi4prs
 use alacritty_terminal::selection::Selection;
@@ -37,21 +39,26 @@ impl IntoRects for RenderableCursor {
 
         match selection {
             Some(selection) => {
+                info!("55555 START");
                 let thickness_2 = 3.0;
                 match selection.ty {
-                    SelectionType::Simple => CursorRects::default(), // TEMP
-                    SelectionType::Block => CursorRects::default(), // TEMP
-                    SelectionType::Semantic => selection_type_letter_s(x, y, width, height, thickness_2, self.color()),
-                    SelectionType::Lines => selection_type_letter_l(x, y, width, height, thickness_2, self.color()),
-                    _ => CursorRects::default(), // throw ???
+                    SelectionType::Simple => { info!("55555 Simple");default2()}, // TEMP
+                    SelectionType::Block =>  { info!("55555 Block"); default2()}, // TEMP
+                    SelectionType::Semantic => { info!("55555 Semantic"); selection_type_letter_s(x, y, width, height, thickness_2, self.color())},
+                    SelectionType::Lines => { info!("55555 Lines"); selection_type_letter_l(x, y, width, height, thickness_2, self.color())},
+                    _ =>  { info!("55555 underscore"); default2()}, // throw ???
                 }
                 //eturn selection_type_letter(selection, x, y, width, height, thickness, self.color());
             },
             None => {
+                info!("8888002 (no selection, going to use orig cursors)");
+                let red = Rgb::new(255,0,0);
                 match self.shape() {
                     CursorShape::Beam => beam(x, y, height, thickness, self.color()),
                     CursorShape::Underline => underline(x, y, width, height, thickness, self.color()),
                     CursorShape::HollowBlock => hollow(x, y, width, height, thickness, self.color()),
+                    // for CursorShape::Block, done by changing fg of cell, not drawing rects. see content.rs
+                    //_ => hollow(x, y, width, height, thickness +1., red),
                     _ => CursorRects::default(),
                 } 
             }
@@ -122,6 +129,7 @@ fn hollow(x: f32, y: f32, width: f32, height: f32, thickness: f32, color: Rgb) -
 
 /// iksi4prs
 // based on hollow
+/*
 fn selection_type_letter_NOT_USED(
     selection: &Option<Selection>,
     x: f32,
@@ -154,6 +162,7 @@ fn selection_type_letter_NOT_USED(
     //     _ => CursorRects::default(),
     // }
 }
+*/
 
 fn selection_type_letter_l(x: f32, y: f32, width: f32, height: f32, thickness: f32, color: Rgb) -> CursorRects {
     
@@ -198,4 +207,13 @@ fn selection_type_letter_s(x: f32, y: f32, width: f32, height: f32, thickness: f
         rects: [Some(left_line),Some(right_line), Some(empty), Some(empty)],
         index: 0,
     }
+}
+
+fn default2() -> CursorRects {
+    //let y = y + height - thickness;
+    info!("8888001 (default2)");
+    //let color = Rgb::default();
+    let color = Rgb::new(255, 0, 0);
+    let alpha  = 1.;
+    RenderRect::new(0., 0., 3., 3. , color, alpha).into()
 }
