@@ -208,7 +208,7 @@ fn block_selection_type_letters(selection: SelectionType, x: f32, y: f32, width:
     }
 }
 
-// trying to draw upper case L, we use 2 recatnlges, and result is:
+// Trying to draw upper case L, we use 2 recatnlges, and result is:
 //  |
 //  |___
 fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thickness_: f32, color_X: Rgb) -> CursorRects {
@@ -244,7 +244,7 @@ fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-// limited by only 4 rectangles,
+// Limited by only 4 rectangles,
 // trying to draw upper case S, result is something like this:
 //  |----
 //
@@ -280,7 +280,7 @@ fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-// limited by only 4 rectangles,
+// Limited by only 4 rectangles,
 // trying to draw lower case b (because not enough rectangles to draw upper case B),
 // result is something like this:
 //  |
@@ -318,7 +318,9 @@ fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-// limited by only 4 rectangles,
+// For "Simple" the letter used is "N" for  "Normal", to comply with naming used in docs,
+// see ToggleNormalSelection.
+// Limited by only 4 rectangles,
 // trying to draw lower case n (because not enough rectangles to draw upper case N),
 // result is something like this:
 //  ------

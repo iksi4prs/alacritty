@@ -80,10 +80,12 @@ const SHORTENER: char = '…';
 const DAMAGE_RECT_COLOR: Rgb = Rgb::new(255, 0, 255);
 
 /// Labels for vi selection types
-const SELECTION_TYPE_SIMPLE_LABEL: &str = "Simple";
 const SELECTION_TYPE_BLOCK_LABEL: &str = "Block";
 const SELECTION_TYPE_SEMANTIC_LABEL: &str = "Semantic";
 const SELECTION_TYPE_LINES_LABEL: &str = "Lines";
+// For "Simple" the label used is "Normal" to comply with naming used in man,
+// see ToggleNormalSelection.
+const SELECTION_TYPE_SIMPLE_LABEL: &str = "Normal";
 
 #[derive(Debug)]
 pub enum Error {
