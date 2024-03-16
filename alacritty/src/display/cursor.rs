@@ -196,6 +196,8 @@ fn default2() -> CursorRects {
 }
 */
 
+// reminder when = doint PR, suggest/ask to move to 7 rectangles,
+// for "7-segements", and ask what they think
 fn block_selection_type_letters(selection: SelectionType, x: f32, y: f32, width: f32, height: f32, thickness: f32, color: Rgb) -> CursorRects {
     match selection {
         SelectionType::Simple => { info!("55555 Simple");selection_type_letter_n(x, y, width, height, thickness, color)}
@@ -206,6 +208,9 @@ fn block_selection_type_letters(selection: SelectionType, x: f32, y: f32, width:
     }
 }
 
+// trying to draw upper case L, we use 2 recatnlges, and result is:
+//  |
+//  |___
 fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     //let top_line = RenderRect::new(x, y, width, thickness_2, color, 1.);
@@ -217,12 +222,14 @@ fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let height = height_ - 2. * padding;
     let width = width_ - 2. * padding;
 
+    // horizontal line(s)
+    let bottom_y = y + height - thickness;
+    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
+
+    // vertical line(s)
     let vertical_y = y + thickness;
     let vertical_height = height - 2. * thickness;
     let left_line = RenderRect::new(x, vertical_y, thickness, vertical_height, color, 1.);
-
-    let bottom_y = y + height - thickness;
-    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
 
     //let right_x = x + width - thickness;
     //let right_line = RenderRect::new(right_x, vertical_y, thickness, vertical_height, color, 1.);
@@ -236,7 +243,11 @@ fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-
+// limited by only 4 rectangles,
+// trying to draw upper case S, result is something like this:
+//  |----
+//
+//  ____|
 fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     let padding = 1.;
@@ -246,20 +257,20 @@ fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let width = width_ - 2. * padding;
 
     let color = Rgb::new(0, 255, 0);
+    
+    // horizontal line(s)
     let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
+    let bottom_y = y + height - thickness;
+    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
+
+    // vertical line(s)
     let left_line_y = y + thickness;
     let vertical_height = height - 2. * thickness;
     let right_line_y = y + height/2. + thickness;
     let vertical_line_length = vertical_height/2.;
     let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
-
-    let bottom_y = y + height - thickness;
-    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
-
     let right_x = x + width - thickness;
     let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
-
-    let empty = RenderRect::new(x, bottom_y, 0., 0., color, 1.);
 
     CursorRects {
         rects: [Some(left_line),Some(bottom_line), Some(top_line), Some(right_line)],
@@ -267,7 +278,11 @@ fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-// TEMP - still to fix line
+// limited by only 4 rectangles,
+// trying to draw upper case B, result is something like this:
+//  ----|
+//  ----|
+//  ____|
 fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     let padding = 1.;
@@ -277,28 +292,33 @@ fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let width = width_ - 2. * padding;
 
     let color = Rgb::new(255, 0, 0);
-    let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
-    let left_line_y = y + thickness;
-    let vertical_height = height - 2. * thickness;
-    let right_line_y = y + height/2. + thickness;
-    let vertical_line_length = vertical_height/2.;
-    let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
 
+    // horizontal line(s)
+    let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
+    let center_y = y + height/2.0 - thickness;
+    let center_line = RenderRect::new(x, center_y, width, thickness, color, 1.);
     let bottom_y = y + height - thickness;
     let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
 
+    // vertical line(s)
+    let vertical_height = height - 2. * thickness;
+    let right_line_y = y + thickness;
+//    let vertical_line_length = vertical_height/2.;
     let right_x = x + width - thickness;
-    let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
-
-    let empty = RenderRect::new(x, bottom_y, 0., 0., color, 1.);
+    let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_height, color, 1.);
 
     CursorRects {
-        rects: [Some(left_line),Some(bottom_line), Some(top_line), Some(right_line)],
+        rects: [Some(top_line),Some(center_line), Some(bottom_line), Some(right_line)],
         index: 0,
     }
 }
 
-// TEMP - still to fix line
+// limited by only 4 rectangles,
+// trying to draw lower case n (because not enough rectangles to draw upper case N),
+// result is something like this:
+//  ------
+//  |    |
+//  |    |
 fn selection_type_letter_n(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     let padding = 1.;
@@ -308,20 +328,20 @@ fn selection_type_letter_n(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let width = width_ - 2. * padding;
 
     let color = Rgb::new(255, 255, 0);
+
+    // horizontal line(s)
     let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
     let left_line_y = y + thickness;
+    let bottom_y = y + height - thickness;
+    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
+
+    // vertical line(s)
     let vertical_height = height - 2. * thickness;
     let right_line_y = y + height/2. + thickness;
     let vertical_line_length = vertical_height/2.;
     let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
-
-    let bottom_y = y + height - thickness;
-    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
-
     let right_x = x + width - thickness;
     let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
-
-    let empty = RenderRect::new(x, bottom_y, 0., 0., color, 1.);
 
     CursorRects {
         rects: [Some(left_line),Some(bottom_line), Some(top_line), Some(right_line)],
