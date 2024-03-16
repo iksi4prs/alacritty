@@ -49,17 +49,7 @@ impl IntoRects for RenderableCursor {
             
             CursorShape::Block => {
                 match selection {
-                    Some(selection) => {
-                        // LATER MOVE THIS BLOCK TO BE inside 'block_selection_type_letters'
-                        let thickness_2 = 3.0;
-                        match selection.ty {
-                            SelectionType::Simple => { info!("55555 Simple");selection_type_letter_n(x, y, width, height, thickness_2, self.color())}
-                            SelectionType::Block =>  { info!("55555 Block"); selection_type_letter_b(x, y, width, height, thickness_2, self.color())}
-                            SelectionType::Semantic => { info!("55555 Semantic"); selection_type_letter_s(x, y, width, height, thickness_2, self.color())},
-                            SelectionType::Lines => { info!("55555 Lines"); selection_type_letter_l(x, y, width, height, thickness_2, self.color())},
-                            _ =>  { info!("55555 underscore"); block()}, // throw ???
-                        }
-                    }
+                    Some(selection) => block_selection_type_letters(selection.ty, x, y, width, height, thickness, self.color()),
                     None => block()
                 }
             },
@@ -205,6 +195,16 @@ fn default2() -> CursorRects {
     RenderRect::new(0., 0., 3., 3. , color, alpha).into()
 }
 */
+
+fn block_selection_type_letters(selection: SelectionType, x: f32, y: f32, width: f32, height: f32, thickness: f32, color: Rgb) -> CursorRects {
+    match selection {
+        SelectionType::Simple => { info!("55555 Simple");selection_type_letter_n(x, y, width, height, thickness, color)}
+        SelectionType::Block =>  { info!("55555 Block"); selection_type_letter_b(x, y, width, height, thickness, color)}
+        SelectionType::Semantic => { info!("55555 Semantic"); selection_type_letter_s(x, y, width, height, thickness, color)},
+        SelectionType::Lines => { info!("55555 Lines"); selection_type_letter_l(x, y, width, height, thickness, color)},
+        _ =>  { info!("55555 underscore"); block()}, // throw ???
+    }
+}
 
 fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
