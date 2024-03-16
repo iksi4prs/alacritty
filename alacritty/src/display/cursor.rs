@@ -292,7 +292,7 @@ fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let height = height_ - 2. * padding;
     let width = width_ - 2. * padding;
 
-    let color = Rgb::new(255, 0, 0);
+    let color = Rgb::new(0, 255, 0);
 
     // horizontal line(s)
     //let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
@@ -329,7 +329,7 @@ fn selection_type_letter_n(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let height = height_ - 2. * padding;
     let width = width_ - 2. * padding;
 
-    let color = Rgb::new(255, 255, 0);
+    let color = Rgb::new(0, 255, 0);
 
     // horizontal line(s)
     let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
