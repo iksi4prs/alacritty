@@ -228,7 +228,7 @@ fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
 
     // vertical line(s)
-    let vertical_y = y + thickness;
+    let vertical_y = y;// + thickness;
     let vertical_height = height - 2. * thickness;
     let left_line = RenderRect::new(x, vertical_y, thickness, vertical_height, color, 1.);
 
@@ -305,8 +305,8 @@ fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
 
     // vertical line(s)
-    let vertical_height = height - 2. * thickness;
-    let left_line_y = y + thickness;
+    let vertical_height = height;// - 2. * thickness;
+    let left_line_y = y;// + thickness;
     let left_line = RenderRect::new(x, left_line_y, thickness, vertical_height, color, 1.);
     let right_line_y = y + vertical_height/2. + thickness;
     let right_x = x + width - thickness;
@@ -340,10 +340,10 @@ fn selection_type_letter_n(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
 
     // vertical line(s)
     let vertical_height = height - 2. * thickness;
-    let left_line_y = y + thickness;
+    let left_line_y = y;// + thickness;
     let left_line = RenderRect::new(x, left_line_y, thickness, vertical_height, color, 1.);
     let right_x = x + width - thickness;
-    let right_line_y = left_line_y;//y + height/2. + thickness;
+    let right_line_y = y + thickness;
     let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_height, color, 1.);
 
     CursorRects {
