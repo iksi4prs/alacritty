@@ -207,7 +207,11 @@ impl<'a> Iterator for RenderableContent<'a> {
                     let has_selection = self.has_selection_type;
                     info!("555003, configured: {}, vi_mode: {}, has_selection: {}", configured, vi_mode, has_selection);
 
-                    let skip = if vi_mode && has_selection && configured {true} else {false};
+                    // NEW - draw selection letters in other color, over the cell
+                    let skip = false;
+                    // OLD - draw the whole cursor for selection letters
+                    //let skip = if vi_mode && has_selection && configured {true} else {false};
+                    
                     // 616161 check here value of has_selection
                     if skip {
                         // do nothing, all drawing is via 'cursor.rects'
