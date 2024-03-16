@@ -53,11 +53,11 @@ impl IntoRects for RenderableCursor {
                         // LATER MOVE THIS BLOCK TO BE inside 'block_selection_type_letters'
                         let thickness_2 = 3.0;
                         match selection.ty {
-                            SelectionType::Simple => { info!("55555 Simple");default2()}, // TEMP
-                            SelectionType::Block =>  { info!("55555 Block"); default2()}, // TEMP
+                            SelectionType::Simple => { info!("55555 Simple");selection_type_letter_n(x, y, width, height, thickness_2, self.color())}
+                            SelectionType::Block =>  { info!("55555 Block"); selection_type_letter_b(x, y, width, height, thickness_2, self.color())}
                             SelectionType::Semantic => { info!("55555 Semantic"); selection_type_letter_s(x, y, width, height, thickness_2, self.color())},
                             SelectionType::Lines => { info!("55555 Lines"); selection_type_letter_l(x, y, width, height, thickness_2, self.color())},
-                            _ =>  { info!("55555 underscore"); default2()}, // throw ???
+                            _ =>  { info!("55555 underscore"); block()}, // throw ???
                         }
                     }
                     None => block()
@@ -149,6 +149,15 @@ fn hollow(x: f32, y: f32, width: f32, height: f32, thickness: f32, color: Rgb) -
     }
 }
 
+// 171717
+fn block() -> CursorRects {
+    // for CursorShape::Block, done by changing fg of cell,
+    // not drawing rect (see content.rs), so return default/empty value.
+    CursorRects::default()
+    //let y = y + height - thickness;
+}
+
+                    
 /// iksi4prs
 // based on hollow
 /*
@@ -186,6 +195,17 @@ fn selection_type_letter_NOT_USED(
 }
 */
 
+/*
+fn default2() -> CursorRects {
+    //let y = y + height - thickness;
+    info!("8888001 (default2)");
+    //let color = Rgb::default();
+    let color = Rgb::new(255, 0, 0);
+    let alpha  = 1.;
+    RenderRect::new(0., 0., 3., 3. , color, alpha).into()
+}
+*/
+
 fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     //let top_line = RenderRect::new(x, y, width, thickness_2, color, 1.);
@@ -216,7 +236,7 @@ fn selection_type_letter_l(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-// just temp
+
 fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
     
     let padding = 1.;
@@ -247,21 +267,64 @@ fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
     }
 }
 
-fn default2() -> CursorRects {
-    //let y = y + height - thickness;
-    info!("8888001 (default2)");
-    //let color = Rgb::default();
+// TEMP - still to fix line
+fn selection_type_letter_b(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
+    
+    let padding = 1.;
+    let x = x_ + padding;
+    let y = y_ + padding;
+    let height = height_ - 2. * padding;
+    let width = width_ - 2. * padding;
+
     let color = Rgb::new(255, 0, 0);
-    let alpha  = 1.;
-    RenderRect::new(0., 0., 3., 3. , color, alpha).into()
+    let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
+    let left_line_y = y + thickness;
+    let vertical_height = height - 2. * thickness;
+    let right_line_y = y + height/2. + thickness;
+    let vertical_line_length = vertical_height/2.;
+    let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
+
+    let bottom_y = y + height - thickness;
+    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
+
+    let right_x = x + width - thickness;
+    let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
+
+    let empty = RenderRect::new(x, bottom_y, 0., 0., color, 1.);
+
+    CursorRects {
+        rects: [Some(left_line),Some(bottom_line), Some(top_line), Some(right_line)],
+        index: 0,
+    }
 }
 
-// 171717
-fn block() -> CursorRects {
-    // for CursorShape::Block, done by changing fg of cell,
-    // not drawing rect (see content.rs), so return default/empty value.
-    CursorRects::default()
-    //let y = y + height - thickness;
-}
+// TEMP - still to fix line
+fn selection_type_letter_n(x_: f32, y_: f32, width_: f32, height_: f32, thickness: f32, color_X: Rgb) -> CursorRects {
+    
+    let padding = 1.;
+    let x = x_ + padding;
+    let y = y_ + padding;
+    let height = height_ - 2. * padding;
+    let width = width_ - 2. * padding;
 
-                    
+    let color = Rgb::new(255, 255, 0);
+    let top_line = RenderRect::new(x, y, width, thickness, color, 1.);
+    let left_line_y = y + thickness;
+    let vertical_height = height - 2. * thickness;
+    let right_line_y = y + height/2. + thickness;
+    let vertical_line_length = vertical_height/2.;
+    let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
+
+    let bottom_y = y + height - thickness;
+    let bottom_line = RenderRect::new(x, bottom_y, width, thickness, color, 1.);
+
+    let right_x = x + width - thickness;
+    let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
+
+    let empty = RenderRect::new(x, bottom_y, 0., 0., color, 1.);
+
+    CursorRects {
+        rects: [Some(left_line),Some(bottom_line), Some(top_line), Some(right_line)],
+        index: 0,
+    }
+}
