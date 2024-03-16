@@ -268,10 +268,10 @@ fn selection_type_letter_s(x_: f32, y_: f32, width_: f32, height_: f32, thicknes
 
     // vertical line(s)
     let vertical_height = height - 2. * thickness;
-    let vertical_line_length = vertical_height/2.;
+    let vertical_line_length = vertical_height / 2.;
     let left_line_y = y + thickness;
     let left_line = RenderRect::new(x, left_line_y, thickness, vertical_line_length, color, 1.);
-    let right_line_y = y + height/2. + thickness;
+    let right_line_y = y + height / 2.;
     let right_x = x + width - thickness;
     let right_line = RenderRect::new(right_x, right_line_y, thickness, vertical_line_length, color, 1.);
 
